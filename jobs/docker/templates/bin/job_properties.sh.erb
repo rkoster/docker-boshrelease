@@ -173,6 +173,19 @@ export DOCKER_VM_MAX_MAP_COUNT=<%= p('vm.max_map_count') %>
   <% end %>
 <% end %>
 
+<% if p('silk', false) %>
+  curl_silk_daemon="curl -s localhost:<%= p('silk_daemon.listen_port') %>"
+  SILK_SUBNET=$(${curl_silk_daemon} | sed -n 's/.*"overlay_subnet":"\([^"]*\)".*/\1/p')
+  SILK_MTU=$(${curl_silk_daemon} | sed -n 's/.*"mtu":\([0-9]*\).*/\1/p')
+  export DOCKER_MTU="--mtu=${SILK_MTU}"
+  # Attach containers to a network bridge
+  <% if_p('bridge') do |bridge| %>
+  export DOCKER_BRIDGE="--bridge=<%= p('bridge') %>"
+  export DOCKER_BRIDGE_NAME=<%= p('bridge') %>
+  export DOCKER_BRIDGE_CIDR="${SILK_SUBNET}"
+  <% end %>
+<% end %>
+
 # Proxy configuration
 <% if_p('env.http_proxy') do |http_proxy| %>
 export HTTP_PROXY="<%= http_proxy %>"

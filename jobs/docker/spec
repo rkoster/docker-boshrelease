@@ -119,6 +119,12 @@ properties:
     description: "Enable flannel support"
     default: false
 
+  silk:
+    description: "Enable silk support"
+    default: false
+  silk_daemon.listen_port:
+    description: "Used to discover silk subnet and mtu"
+    default: 23954
 
   env.http_proxy:
     description: "HTTP proxy that Docker should use"
